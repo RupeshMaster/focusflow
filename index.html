@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FocusFlow - Smart Study Planner</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="assets/logo.svg">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+
+<!-- ... -->
+
+
+
+<body>
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav class="navbar glass">
+            <div class="logo">FocusFlow</div>
+
+            <div class="nav-right">
+                <!-- Desktop Links (Hidden on Mobile) -->
+                <div class="nav-links" id="nav-links">
+                    <button id="btn-dashboard" class="nav-btn active">Dashboard</button>
+                    <button id="btn-timetable" class="nav-btn">Timetable</button>
+                    <button id="btn-notes" class="nav-btn">Notes</button>
+                    <button id="btn-profile" class="nav-btn">Profile</button>
+                </div>
+
+                <!-- Mobile Controls -->
+                <div class="nav-controls">
+                    <button id="btn-theme-toggle" class="nav-btn" aria-label="Toggle Theme">
+                        <!-- Sun Icon (Default) -->
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" class="theme-icon-sun">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                    </button>
+
+                    <button id="btn-menu" class="nav-btn mobile-only" aria-label="Menu"
+                        style="margin-left: 10px; display: none;">
+                        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2"
+                            fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main id="main-content" class="content-area">
+
+            <!-- SECTION: ONBOARDING / PROFILE -->
+            <section id="section-profile" class="hidden fade-in">
+                <div class="card glass">
+                    <h2>Student Profile</h2>
+                    <form id="profile-form">
+                        <div class="form-group">
+                            <label>Age</label>
+                            <input type="number" id="inp-age" required min="5" max="100">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>School Start</label>
+                                <input type="time" id="inp-school-start" value="08:00">
+                            </div>
+                            <div class="form-group">
+                                <label>School End</label>
+                                <input type="time" id="inp-school-end" value="15:00">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Preferred Study Time (From)</label>
+                            <input type="time" id="inp-study-start">
+                        </div>
+                        <div class="form-group">
+                            <label>Preferred Study Time (To)</label>
+                            <input type="time" id="inp-study-end">
+                        </div>
+                        <button type="submit" class="btn-primary">Save Profile</button>
+                    </form>
+                </div>
+
+                <div class="card glass">
+                    <h2>Subjects</h2>
+                    <form id="subject-form">
+                        <div class="form-group">
+                            <label>Subject Name</label>
+                            <input type="text" id="inp-sub-name" required placeholder="e.g. Mathematics">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Priority</label>
+                                <select id="inp-sub-prio">
+                                    <option value="High">High</option>
+                                    <option value="Medium" selected>Medium</option>
+                                    <option value="Low">Low</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Strength</label>
+                                <select id="inp-sub-weak">
+                                    <option value="Weak">Weak</option>
+                                    <option value="Strong" selected>Strong</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Mood</label>
+                            <select id="inp-sub-mood">
+                                <option value="Like">Like</option>
+                                <option value="Neutral" selected>Neutral</option>
+                                <option value="Dislike">Dislike</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-secondary">Add Subject</button>
+                    </form>
+                    <div id="subject-list" class="list-container">
+                        <!-- Subject Items -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION: DASHBOARD -->
+            <section id="section-dashboard" class="fade-in">
+                <header class="header-section">
+                    <h1>Hello! 👋</h1>
+                    <p class="subtitle">Ready to conquer your goals today?</p>
+                </header>
+
+                <div class="stats-grid">
+                    <div class="stat-card glass">
+                        <h3>Study Load</h3>
+                        <canvas id="chart-load" height="200"></canvas>
+                    </div>
+                    <div class="stat-card glass">
+                        <h3>Subjects Mix</h3>
+                        <canvas id="chart-subjects" height="200"></canvas>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <button id="btn-generate" class="btn-primary big-btn">Generate New Timetable</button>
+                </div>
+            </section>
+
+            <!-- SECTION: TIMETABLE -->
+            <section id="section-timetable" class="hidden fade-in">
+                <div class="timetable-header" style="margin-bottom:15px;">
+                    <h2 style="margin-bottom:10px;">Weekly Schedule</h2>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <button id="btn-regenerate" class="btn-secondary"
+                            style="width:auto; margin-top:5px;">Regenerate</button>
+                        <button id="btn-export-timetable" class="btn-secondary" style="width:auto; margin-top:5px;">Save
+                            Image</button>
+                    </div>
+                </div>
+
+                <div class="table-container-scroll">
+                    <table class="timetable-table">
+                        <thead id="timetable-head">
+                            <!-- Injected JS -->
+                        </thead>
+                        <tbody id="timetable-body">
+                            <!-- Injected JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Edit Modal -->
+            <div id="edit-modal" class="modal hidden">
+                <div class="modal-content glass">
+                    <h3>Edit Slot</h3>
+                    <p id="edit-slot-info" style="margin-bottom:15px;color:var(--text-muted)"></p>
+
+                    <label>Select Subject</label>
+                    <select id="edit-subject-select" style="margin-bottom:20px;">
+                        <!-- Options injected -->
+                    </select>
+
+                    <div style="display:flex;justify-content:flex-end;gap:10px;">
+                        <button id="btn-cancel-edit" class="btn-secondary" style="margin:0;width:auto">Cancel</button>
+                        <button id="btn-save-edit" class="btn-primary" style="margin:0;width:auto">Save</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION: NOTES -->
+            <section id="section-notes" class="hidden fade-in">
+                <h2 style="margin-bottom:15px;">My Notes</h2>
+                <div class="card glass">
+                    <div class="form-group">
+                        <input type="text" id="inp-note-title" placeholder="Title (optional)"
+                            style="font-weight:bold; font-size:1.1rem; border-bottom:1px solid rgba(255,255,255,0.2); border-width:0 0 1px 0; border-radius:0; padding-left:0; background:transparent; color:var(--text-main);">
+                    </div>
+                    <div class="form-group">
+                        <textarea id="inp-note-content" placeholder="Write something down..." rows="5"
+                            style="border:none; background:transparent; resize:vertical; width:100%; font-family:inherit; font-size:1rem; outline:none; height:120px; color:var(--text-main);"></textarea>
+                    </div>
+                    <div style="display:flex; justify-content:flex-end;">
+                        <button id="btn-save-note" class="btn-primary" style="width:auto; padding: 0.6rem 2rem;">Save
+                            Note</button>
+                    </div>
+                </div>
+
+                <div style="margin-bottom:10px; margin-top:30px;">
+                    <h3 style="margin:0;">Saved Notes</h3>
+                </div>
+                <div id="notes-list" class="notes-grid">
+                    <!-- Notes injected here -->
+                </div>
+            </section>
+
+
+        </main>
+    </div>
+
+    <div id="toast" class="toast hidden">Notification</div>
+
+    <script type="module" src="js/app.js"></script>
+    <script>
+        // Check for file protocol violation
+        if (window.location.protocol === 'file:') {
+            const warning = document.createElement('div');
+            warning.style.cssText = 'position:fixed;top:0;left:0;width:100%;background:#ef4444;color:white;text-align:center;padding:15px;z-index:9999;font-weight:bold;box-shadow:0 4px 12px rgba(0,0,0,0.2);';
+            warning.innerHTML = '⚠️ Security Warning: PWAs and ES Modules do not work via file:// protocol.<br>Please use a local server (e.g., Live Server in VS Code, or run "npx http-server").';
+            document.body.prepend(warning);
+        }
+
+        if ('serviceWorker' in navigator) {
+            // Only register if http/https to avoid error logs
+            if (window.location.protocol.startsWith('http')) {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('SW Registered'))
+                    .catch(err => console.log('SW Fail', err));
+            }
+        }
+    </script>
+</body>
+
+</html>

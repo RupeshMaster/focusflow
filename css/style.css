@@ -1,0 +1,480 @@
+:root {
+    --primary: #6366f1;
+    --primary-hover: #4f46e5;
+    --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --text-main: #1f2937;
+    --text-muted: #6b7280;
+    --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+    --card-radius: 16px;
+}
+
+/* Dark Mode Support (Basic) */
+/* Dark Mode Support */
+[data-theme="dark"] {
+    --bg-gradient: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+    --glass-bg: rgba(31, 41, 55, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --text-main: #f3f4f6;
+    --text-muted: #9ca3af;
+}
+
+/* Smooth Transition */
+body,
+.glass,
+button,
+input,
+select,
+textarea {
+    transition: background 0.3s, color 0.3s, border-color 0.3s;
+}
+
+/* Theme Toggle Button */
+#btn-theme-toggle {
+    font-size: 1.2rem;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#btn-theme-toggle svg {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#btn-theme-toggle:hover svg {
+    transform: rotate(15deg) scale(1.1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+    background: var(--bg-gradient);
+    color: var(--text-main);
+    min-height: 100vh;
+}
+
+.app-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    padding-bottom: 80px;
+    /* Space for nav on mobile could be bottom */
+}
+
+/* Glassmorphism Classes */
+.glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--card-radius);
+    box-shadow: var(--shadow);
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+    position: sticky;
+    top: 10px;
+    z-index: 100;
+}
+
+.logo {
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: var(--primary);
+    letter-spacing: -0.5px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 1rem;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.nav-controls {
+    display: flex;
+    align-items: center;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 70px;
+        right: 1.5rem;
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--card-radius);
+        padding: 1rem;
+        width: 200px;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-links.active {
+        display: flex;
+        animation: fadeSlideIn 0.3s ease;
+    }
+
+    #btn-menu {
+        display: block !important;
+    }
+}
+
+@keyframes fadeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+
+
+.nav-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.nav-btn.active {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+/* Common Components */
+.card {
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+    width: 100%;
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    width: 100%;
+}
+
+/* Forms */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-row {
+    display: flex;
+    gap: 1rem;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.9);
+    /* More opaque by default for readability */
+    color: #1f2937;
+    /* Always dark text on light background */
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: white;
+    color: #1f2937;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+/* Sections */
+/* ... (existing sections logic, skipped in this replace block for brevity if I could, but I need to clear the old media query) ... */
+/* Actually, I need to remove the OLD media query block and append the NEW one at the end. 
+   Since `replace_file_content` works on contiguous blocks, I have to be careful.
+   The old media query was around line 168.
+   I will Remove it here by replacing the block that contained it with just the standard styles.
+*/
+
+
+/* Sections */
+.hidden {
+    display: none;
+}
+
+.fade-in {
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Dashboard */
+.header-section h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-card h3 {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    color: var(--text-muted);
+}
+
+canvas {
+    max-width: 100%;
+}
+
+/* Timetable Grid */
+.timetable-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.slot-card {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-left: 5px solid var(--primary);
+    transition: transform 0.2s;
+}
+
+.slot-card:hover {
+    transform: scale(1.02);
+}
+
+.slot-time {
+    font-weight: 700;
+    margin-right: 1.5rem;
+    min-width: 80px;
+    font-size: 0.9rem;
+}
+
+.slot-content h4 {
+    font-size: 1.1rem;
+    margin-bottom: 0.2rem;
+}
+
+.slot-content p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.slot-break {
+    background: rgba(0, 0, 0, 0.03);
+    border-left-color: #9ca3af;
+    opacity: 0.7;
+}
+
+/* Mobile Tweaks */
+@media (max-width: 600px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Subject List */
+.subject-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.8rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.subject-name {
+    font-weight: 600;
+}
+
+.subject-tags span {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary);
+    margin-left: 5px;
+}
+
+/* --- New Timetable Styles --- */
+.table-container-scroll {
+    overflow-x: auto;
+    border-radius: var(--card-radius);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(12px);
+}
+
+.timetable-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+.timetable-table th,
+.timetable-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    border-right: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.timetable-table th {
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.timetable-table td {
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.timetable-table td:hover {
+    background: rgba(99, 102, 241, 0.05);
+}
+
+/* Slot Styling inside cell */
+.slot-cell-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.slot-cell-subject {
+    font-weight: 600;
+}
+
+.slot-cell-time {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.cell-break {
+    background: rgba(0, 0, 0, 0.02);
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+
+.modal.hidden {
+    display: none;
+    opacity: 0;
+}
+
+.modal-content {
+    width: 90%;
+    max-width: 400px;
+    background: white;
+    /* fallback */
+    background: var(--glass-bg);
+    padding: 2rem;
+    border-radius: var(--card-radius);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
