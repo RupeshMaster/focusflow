@@ -296,6 +296,34 @@
                     .catch(err => console.log('SW Fail', err));
             }
         }
+
+        // HIDDEN FEATURE: Click Version 3 times to Hard Reset
+        const versionSpan = document.querySelector('footer span');
+        let clickCount = 0;
+        if (versionSpan) {
+            versionSpan.style.cursor = 'pointer';
+            versionSpan.title = 'Tap 3 times to Force Reset';
+            versionSpan.addEventListener('click', () => {
+                clickCount++;
+                if (clickCount === 3) {
+                    if (confirm('Force Reset App Data & Cache?')) {
+                        if (navigator.serviceWorker) {
+                            navigator.serviceWorker.getRegistrations().then(registrations => {
+                                for (let registration of registrations) registration.unregister();
+                            });
+                        }
+                        localStorage.clear(); // Optional: Clear data too? Maybe just cache.
+                        // Actually, let's keep data, just clear SW.
+                        caches.keys().then(names => {
+                            for (let name of names) caches.delete(name);
+                        });
+                        alert('Reset Complete. Reloading...');
+                        window.location.reload(true);
+                    }
+                    clickCount = 0;
+                }
+            });
+        }
     </script>
 </body>
 
