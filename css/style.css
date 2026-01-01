@@ -129,8 +129,8 @@ body {
         /* Vertically align */
         justify-content: space-between;
         /* Logo Left, Icons Right */
-        gap: 1.5rem;
-        /* Prevent Logo/Icon overlap */
+        gap: 2rem;
+        /* Increased Gap for separation */
     }
 
     .nav-right {
@@ -355,7 +355,8 @@ select {
     transition: all 0.2s;
 }
 
-select {
+select,
+input[type="time"] {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -367,6 +368,13 @@ select {
     /* Space for the arrow */
     background-color: rgba(255, 255, 255, 0.9);
     /* Ensure bg color is kept */
+}
+
+/* Hide default calendar indicator to use custom arrow */
+input[type="time"]::-webkit-calendar-picker-indicator {
+    background: transparent;
+    color: transparent;
+    cursor: pointer;
 }
 
 input:focus,
