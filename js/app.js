@@ -190,8 +190,6 @@ if (btnThemeToggle) {
 }
 
 
-    });
-}
 
 // Check on load
 initTheme();
