@@ -124,21 +124,22 @@ body {
     .navbar {
         flex-direction: row;
         /* Horizontal */
-        padding: 1rem;
-        padding-top: max(1rem, env(safe-area-inset-top));
+        padding: 0.8rem 1rem;
+        padding-top: max(0.8rem, env(safe-area-inset-top));
         /* Handle Notch */
         align-items: center;
         /* Vertically align */
         justify-content: space-between;
         /* Logo Left, Icons Right */
-        gap: 2rem;
-        /* Increased Gap for separation */
+        gap: 0.5rem;
+        /* Min Gap */
     }
 
     .nav-right {
         display: flex;
         /* Ensure flex behavior */
         justify-content: flex-end;
+        align-items: center;
         flex: 1;
         /* Take all remaining space */
     }
@@ -150,11 +151,12 @@ body {
         padding: 0;
         margin-left: auto;
         /* Force to right side */
+        align-items: center;
 
         justify-content: flex-end;
         /* Icons to the right */
-        gap: 0.5rem;
-        /* Reverted to v3.4 (0.5rem) */
+        gap: 0.6rem;
+        /* Tight grouping like reference */
     }
 
     .nav-links .nav-btn {

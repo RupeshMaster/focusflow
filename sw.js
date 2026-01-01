@@ -3,7 +3,7 @@
  * Service Worker for Offline Caching
  */
 
-const CACHE_NAME = 'focusflow-v4.3';
+const CACHE_NAME = 'focusflow-v4.4';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
