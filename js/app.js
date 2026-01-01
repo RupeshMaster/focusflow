@@ -132,13 +132,7 @@ Object.keys(nav).forEach(key => {
     });
 });
 
-// Mobile Menu Toggle Removed
-// const btnMenu = document.getElementById('btn-menu');
-// if (btnMenu) {
-//    btnMenu.addEventListener('click', () => {
-//        navLinksContainer.classList.toggle('active');
-//    });
-// }
+
 
 
 // --- THEME HANDLING ---
@@ -325,7 +319,7 @@ async function handleGenerate() {
         Notification.requestPermission();
     }
 
-    console.log("Generating...", appState.profile, appState.subjects);
+
     if (!appState.profile || appState.subjects.length === 0) {
         showToast("Please complete profile and add subjects first.");
         showView('profile');
@@ -335,7 +329,7 @@ async function handleGenerate() {
     try {
         const today = new Date();
         const generatedWeek = scheduler.generateWeekly(appState.profile, appState.subjects, today);
-        console.log("Generated Week:", generatedWeek);
+
 
         if (generatedWeek && generatedWeek.length > 0) {
             // Save all days
@@ -366,7 +360,6 @@ let editingSlot = null; // { dayIndex, slotIndex }
 
 function renderTimetable() {
     try {
-        console.log("Rendering Timetable...", appState.timetable);
         const thead = document.getElementById('timetable-head');
         const tbody = document.getElementById('timetable-body');
         if (!thead || !tbody) {
@@ -553,7 +546,6 @@ if (btnSaveEdit) btnSaveEdit.onclick = async () => {
     closeEditModal();
 };
 
-// --- NOTES ---
 // --- NOTES ---
 document.getElementById('btn-save-note').addEventListener('click', async () => {
     const titleInp = document.getElementById('inp-note-title');
