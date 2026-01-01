@@ -28,7 +28,7 @@
                 <div class="nav-links" id="nav-links">
                     <button id="btn-dashboard" class="nav-btn active">
                         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="3" y="3" width="7" height="7"></rect>
                             <rect x="14" y="3" width="7" height="7"></rect>
                             <rect x="14" y="14" width="7" height="7"></rect>
@@ -38,7 +38,7 @@
                     </button>
                     <button id="btn-timetable" class="nav-btn">
                         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                             <line x1="16" y1="2" x2="16" y2="6"></line>
                             <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -48,7 +48,7 @@
                     </button>
                     <button id="btn-notes" class="nav-btn">
                         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
                             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
                         </svg>
@@ -56,7 +56,7 @@
                     </button>
                     <button id="btn-profile" class="nav-btn">
                         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
                         </svg>
@@ -65,8 +65,9 @@
                     <!-- Moved Theme Toggle Here for Mobile Layout -->
                     <button id="btn-theme-toggle" class="nav-btn" aria-label="Toggle Theme">
                         <!-- Icons managed by JS -->
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round" class="theme-icon-sun">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round" class="theme-icon-sun" width="20"
+                            height="20">
                             <circle cx="12" cy="12" r="5"></circle>
                             <line x1="12" y1="1" x2="12" y2="3"></line>
                             <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -273,7 +274,7 @@
     </div>
 
     <footer style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.9rem; margin-top: 2rem;">
-        <p>TEAM KARAS &copy; All Rights Reserved 2026. <span style="opacity:0.5; font-size:0.8em;">(v4.2)</span></p>
+        <p>TEAM KARAS &copy; All Rights Reserved 2026. <span style="opacity:0.5; font-size:0.8em;">(v4.3)</span></p>
     </footer>
 
     <div id="toast" class="toast hidden">Notification</div>
@@ -291,7 +292,7 @@
         if ('serviceWorker' in navigator) {
             // Only register if http/https to avoid error logs
             if (window.location.protocol.startsWith('http')) {
-                navigator.serviceWorker.register('sw.js?v=4.2')
+                navigator.serviceWorker.register('sw.js?v=4.3')
                     .then(reg => console.log('SW Registered'))
                     .catch(err => console.log('SW Fail', err));
             }
