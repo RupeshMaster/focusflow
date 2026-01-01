@@ -133,6 +133,12 @@ body {
         /* Prevent Logo/Icon overlap */
     }
 
+    .nav-right {
+        justify-content: flex-end;
+        flex: 1;
+        /* Take remaining space */
+    }
+
     .nav-links {
         display: flex;
         position: static;
