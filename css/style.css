@@ -129,8 +129,8 @@ body {
         /* Vertically align */
         justify-content: space-between;
         /* Logo Left, Icons Right */
-        gap: 0;
-        /* Let space-between handle the big gap */
+        gap: 1rem;
+        /* Prevent Logo/Icon overlap */
     }
 
     .nav-links {
@@ -141,13 +141,13 @@ body {
 
         justify-content: flex-end;
         /* Icons to the right */
-        gap: 0.8rem;
-        /* Gap between individual icons */
+        gap: 0.2rem;
+        /* Tighten icon gap */
     }
 
     .nav-links .nav-btn {
         width: auto;
-        padding: 6px;
+        padding: 4px;
         justify-content: center;
     }
 
