@@ -139,8 +139,6 @@ body {
         justify-content: flex-end;
         flex: 1;
         /* Take all remaining space */
-        width: 100%;
-        /* Force full width */
     }
 
     .nav-links {
