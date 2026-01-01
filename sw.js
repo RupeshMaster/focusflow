@@ -3,7 +3,7 @@
  * Service Worker for Offline Caching
  */
 
-const CACHE_NAME = 'focusflow-REBOOT-v3';
+const CACHE_NAME = 'focusflow-v3.7';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
@@ -31,6 +31,7 @@ self.addEventListener('install', event => {
 
 // Activate Event (Cleanup old caches)
 self.addEventListener('activate', event => {
+    console.log('[SW] Activating new version:', CACHE_NAME);
     event.waitUntil(
         Promise.all([
             self.clients.claim(), // Force control of open clients
@@ -38,6 +39,7 @@ self.addEventListener('activate', event => {
                 return Promise.all(
                     cacheNames.map(cacheName => {
                         if (cacheName !== CACHE_NAME) {
+                            console.log('[SW] Deleting old cache:', cacheName);
                             return caches.delete(cacheName);
                         }
                     })
