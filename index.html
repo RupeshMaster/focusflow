@@ -7,7 +7,7 @@
     <title>FocusFlow - Smart Study Planner</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#4f46e5">
+    <meta name="theme-color" content="#111827">
     <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="assets/logo.svg">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -273,7 +273,7 @@
     </div>
 
     <footer style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.9rem; margin-top: 2rem;">
-        <p>TEAM KARAS &copy; All Rights Reserved 2026. <span style="opacity:0.5; font-size:0.8em;">(v4.0)</span></p>
+        <p>TEAM KARAS &copy; All Rights Reserved 2026. <span style="opacity:0.5; font-size:0.8em;">(v4.2)</span></p>
     </footer>
 
     <div id="toast" class="toast hidden">Notification</div>
@@ -291,7 +291,7 @@
         if ('serviceWorker' in navigator) {
             // Only register if http/https to avoid error logs
             if (window.location.protocol.startsWith('http')) {
-                navigator.serviceWorker.register('sw.js?v=4.0')
+                navigator.serviceWorker.register('sw.js?v=4.2')
                     .then(reg => console.log('SW Registered'))
                     .catch(err => console.log('SW Fail', err));
             }

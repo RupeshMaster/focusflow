@@ -63,6 +63,20 @@ async function init() {
 
             showView('dashboard');
             renderDashboard();
+
+            // Request Notification Permission
+            if ("Notification" in window) {
+                Notification.requestPermission().then(permission => {
+                    console.log("Notification permission:", permission);
+                    if (permission === 'granted') {
+                        new Notification("FocusFlow Ready", { body: "You will be notified 10m before tasks!" });
+                    }
+                });
+            }
+
+            // Start Background Reminder Check
+            setInterval(checkReminders, 60000); // Check every minute
+            checkReminders(); // Initial check
         }
 
         renderSubjectList();
@@ -138,8 +152,16 @@ Object.keys(nav).forEach(key => {
 // --- THEME HANDLING ---
 const btnThemeToggle = document.getElementById('btn-theme-toggle');
 // Icons
-const sunIcon = `<svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
-const moonIcon = `<svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+const sunIcon = `<svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+const moonIcon = `<svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+
+function updateMetaThemeColor(theme) {
+    const metaBox = document.querySelector('meta[name="theme-color"]');
+    if (metaBox) {
+        // Dark: #111827 (gray-900), Light: #ffffff
+        metaBox.setAttribute('content', theme === 'dark' ? '#111827' : '#ffffff');
+    }
+}
 
 function initTheme() {
     const savedTheme = localStorage.getItem('theme');
@@ -147,9 +169,11 @@ function initTheme() {
     if (savedTheme === 'dark') {
         document.documentElement.setAttribute('data-theme', 'dark');
         btnThemeToggle.innerHTML = moonIcon;
+        updateMetaThemeColor('dark');
     } else {
         document.documentElement.setAttribute('data-theme', 'light');
         btnThemeToggle.innerHTML = sunIcon;
+        updateMetaThemeColor('light');
     }
 }
 
@@ -160,13 +184,12 @@ if (btnThemeToggle) {
 
         document.documentElement.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
+        btnThemeToggle.innerHTML = newTheme === 'dark' ? moonIcon : sunIcon;
+        updateMetaThemeColor(newTheme);
+    });
+}
 
-        // Update Icon with simple spin effect
-        btnThemeToggle.style.transform = 'rotate(360deg)';
-        setTimeout(() => {
-            btnThemeToggle.innerHTML = newTheme === 'dark' ? moonIcon : sunIcon;
-            btnThemeToggle.style.transform = 'none';
-        }, 150); // wait halfway for smoothness
+
     });
 }
 
@@ -744,6 +767,51 @@ function showToast(msg) {
     t.textContent = msg;
     t.classList.remove('hidden');
     setTimeout(() => t.classList.add('hidden'), 3000);
+}
+
+// --- REMINDERS ---
+function checkReminders() {
+    if (!appState.timetable || appState.timetable.length === 0) return;
+
+    // Get today's plan
+    // Note: appState.timetable[0] corresponds to "today" if we just fetched it.
+    // Ideally compare dates.
+    const todayStr = new Date().toISOString().split('T')[0];
+    const todaysPlan = appState.timetable.find(p => p.date === todayStr);
+
+    if (!todaysPlan || !todaysPlan.slots) return;
+
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+    todaysPlan.slots.forEach(slot => {
+        // Convert '08:00 AM' back to minutes
+        // We need a helper for Time String -> Minutes since it's only in Scheduler class currently.
+        // Let's quickly re-implement or expose it.
+        // Simple parser:
+        const [time, modifier] = slot.startTime.split(' ');
+        let [hours, minutes] = time.split(':');
+        hours = parseInt(hours);
+        minutes = parseInt(minutes);
+        if (hours === 12) hours = 0;
+        if (modifier === 'PM') hours += 12;
+
+        const slotStartMinutes = hours * 60 + minutes;
+        const diff = slotStartMinutes - currentMinutes;
+
+        // Notify if 10 minutes before (allow 1 min buffer i.e. 9-10 mins)
+        if (diff === 10 || diff === 5) {
+            if (Notification.permission === "granted") {
+                new Notification(`Upcoming: ${slot.subjectName}`, {
+                    body: `Starting in ${diff} minutes! (${slot.startTime})`,
+                    icon: 'assets/logo.svg',
+                    vibrate: [200, 100, 200]
+                });
+            } else {
+                showToast(`Reminder: ${slot.subjectName} in ${diff}m`);
+            }
+        }
+    });
 }
 
 // Start
