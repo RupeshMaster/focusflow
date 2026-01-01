@@ -291,7 +291,7 @@
         if ('serviceWorker' in navigator) {
             // Only register if http/https to avoid error logs
             if (window.location.protocol.startsWith('http')) {
-                navigator.serviceWorker.register('sw.js?v=mobile-v3')
+                navigator.serviceWorker.register('sw.js?v=mobile-v4')
                     .then(reg => console.log('SW Registered'))
                     .catch(err => console.log('SW Fail', err));
             }
