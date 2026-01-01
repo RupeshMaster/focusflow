@@ -129,7 +129,7 @@ body {
         /* Vertically align */
         justify-content: space-between;
         /* Logo Left, Icons Right */
-        gap: 1rem;
+        gap: 1.5rem;
         /* Prevent Logo/Icon overlap */
     }
 
