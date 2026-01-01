@@ -134,9 +134,13 @@ body {
     }
 
     .nav-right {
+        display: flex;
+        /* Ensure flex behavior */
         justify-content: flex-end;
         flex: 1;
-        /* Take remaining space */
+        /* Take all remaining space */
+        width: 100%;
+        /* Force full width */
     }
 
     .nav-links {
@@ -144,6 +148,8 @@ body {
         position: static;
         width: auto;
         padding: 0;
+        margin-left: auto;
+        /* Force to right side */
 
         justify-content: flex-end;
         /* Icons to the right */
