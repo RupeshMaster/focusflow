@@ -273,7 +273,7 @@
     </div>
 
     <footer style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.9rem; margin-top: 2rem;">
-        <p>TEAM KARAS &copy; All Rights Reserved 2026. <span style="opacity:0.5; font-size:0.8em;">(v3.9)</span></p>
+        <p>TEAM KARAS &copy; All Rights Reserved 2026. <span style="opacity:0.5; font-size:0.8em;">(v4.0)</span></p>
     </footer>
 
     <div id="toast" class="toast hidden">Notification</div>
@@ -291,7 +291,7 @@
         if ('serviceWorker' in navigator) {
             // Only register if http/https to avoid error logs
             if (window.location.protocol.startsWith('http')) {
-                navigator.serviceWorker.register('sw.js?v=3.9')
+                navigator.serviceWorker.register('sw.js?v=4.0')
                     .then(reg => console.log('SW Registered'))
                     .catch(err => console.log('SW Fail', err));
             }
@@ -303,24 +303,41 @@
         if (versionSpan) {
             versionSpan.style.cursor = 'pointer';
             versionSpan.title = 'Tap 3 times to Force Reset';
+
             versionSpan.addEventListener('click', () => {
                 clickCount++;
+                // Visual Feedback
+                versionSpan.style.color = '#ef4444'; // Red
+                versionSpan.style.fontWeight = 'bold';
+                versionSpan.innerText = `(Tap ${3 - clickCount} more)`;
+
                 if (clickCount === 3) {
-                    if (confirm('Force Reset App Data & Cache?')) {
+                    if (confirm('Force Reset ALL Data & Cache?')) {
+                        // 1. Unregister SW
                         if (navigator.serviceWorker) {
                             navigator.serviceWorker.getRegistrations().then(registrations => {
                                 for (let registration of registrations) registration.unregister();
                             });
                         }
-                        localStorage.clear(); // Optional: Clear data too? Maybe just cache.
-                        // Actually, let's keep data, just clear SW.
-                        caches.keys().then(names => {
-                            for (let name of names) caches.delete(name);
-                        });
-                        alert('Reset Complete. Reloading...');
+                        // 2. Clear Storage
+                        localStorage.clear();
+                        sessionStorage.clear();
+
+                        // 3. Clear Caches
+                        if (window.caches) {
+                            caches.keys().then(names => {
+                                for (let name of names) caches.delete(name);
+                            });
+                        }
+
+                        alert('Resetting... App will reload.');
                         window.location.reload(true);
+                    } else {
+                        // Cancelled
+                        clickCount = 0;
+                        versionSpan.style.color = 'inherit';
+                        versionSpan.innerText = '(v4.0)';
                     }
-                    clickCount = 0;
                 }
             });
         }
