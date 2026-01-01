@@ -140,8 +140,20 @@ export class Scheduler {
             const startMin = this.timeToMin(profile.studyStart);
             const endMin = this.timeToMin(profile.studyEnd);
 
+            // CASE 1: Standard Day Range (e.g. 09:00 AM to 05:00 PM)
             if (endMin > startMin + slotDuration) {
                 return [{ start: profile.studyStart, end: profile.studyEnd }];
+            }
+
+            // CASE 2: Overnight Range (e.g. 23:00 to 06:00)
+            if (startMin > endMin) {
+                // Split into two blocks using 24-hour format:
+                // 1. Morning part: 00:00 to StudyEnd
+                // 2. Night part: StudyStart to 23:59
+                return [
+                    { start: profile.studyStart, end: "23:59" },
+                    { start: "00:00", end: profile.studyEnd }
+                ];
             }
         }
 

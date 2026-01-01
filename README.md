@@ -13,11 +13,16 @@ FocusFlow is a dynamic, offline-capable Progressive Web App (PWA) designed to he
 ## ✨ Features
 
 - **Smart Scheduling**: Auto-generates weekly timetables balancing high-priority and weak subjects.
+- **Overnight Support**: Seamlessly handles "Night Owl" schedules (e.g., 11 PM to 6 AM) without logical errors.
+- **Offline Reminders 🔔**: Get browser notifications 10 minutes and 5 minutes before each study session (works offline!).
+- **Flexible Editing**: Click any slot to change the Subject OR custom Start/End times.
 - **Custom Time Ranges**: Define your own study windows or sync with school hours.
 - **Offline Ready**: Fully functional offline using Service Workers and IndexedDB (PWA).
 - **Data Persistence**: All data is stored locally in your browser. No login required, no cloud data.
-- **Export & Share**: save your weekly schedule or individual notes as high-quality images.
+- **Export & Share**: Save your weekly schedule or individual notes as high-quality images.
 - **Analytics**: Visual charts for subject distribution and study load.
+
+> **Note**: For reminders to work, please click "Allow" when the browser asks for Notification permissions (usually triggered on first "Generate").
 
 ## 🛠️ Tech Stack
 

@@ -59,15 +59,19 @@ textarea {
 body {
     background: var(--bg-gradient);
     color: var(--text-main);
+    display: flex;
+    flex-direction: column;
     min-height: 100vh;
 }
 
 .app-container {
+    flex: 1;
+    /* Pushes footer to the bottom */
+    width: 100%;
     max-width: 800px;
+    /* Restored compact size */
     margin: 0 auto;
-    padding: 20px;
-    padding-bottom: 80px;
-    /* Space for nav on mobile could be bottom */
+    padding: 1rem;
 }
 
 /* Glassmorphism Classes */
@@ -115,31 +119,97 @@ body {
     align-items: center;
 }
 
-/* Mobile Styles */
-@media (max-width: 768px) {
-    .nav-links {
-        display: none;
-        flex-direction: column;
-        position: absolute;
-        top: 70px;
-        right: 1.5rem;
-        background: var(--glass-bg);
-        border: 1px solid var(--glass-border);
-        border-radius: var(--card-radius);
+/* Mobile Styles (Phones Only) */
+@media (max-width: 640px) {
+    .navbar {
+        flex-direction: row;
+        /* Horizontal */
         padding: 1rem;
-        width: 200px;
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        align-items: center;
+        /* Vertically align */
+        justify-content: space-between;
+        /* Logo Left, Icons Right */
+        gap: 0;
+        /* Let space-between handle the big gap */
     }
 
-    .nav-links.active {
+    .nav-links {
         display: flex;
-        animation: fadeSlideIn 0.3s ease;
+        position: static;
+        width: auto;
+        padding: 0;
+
+        justify-content: flex-end;
+        /* Icons to the right */
+        gap: 0.8rem;
+        /* Gap between individual icons */
     }
 
-    #btn-menu {
-        display: block !important;
+    .nav-links .nav-btn {
+        width: auto;
+        padding: 6px;
+        justify-content: center;
+    }
+
+    /* Stack only responsive rows (Study Time) on mobile */
+    /* Stack only responsive rows (Study Time) on mobile */
+    .responsive-row {
+        flex-direction: column;
+        gap: 0.2rem;
+        /* Tight gap */
+        margin-bottom: 1rem;
+    }
+
+    .responsive-row .form-group {
+        margin-bottom: 0;
+        /* Remove margin so gap controls spacing */
+    }
+
+    /* Mixed Row (Priority/Strength | Mood) on mobile */
+    .mixed-row {
+        flex-wrap: wrap;
+        /* Allow grouping */
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        /* Restore gap to button */
+    }
+
+    .mixed-row .form-group:nth-child(1),
+    .mixed-row .form-group:nth-child(2) {
+        flex: 1 1 45%;
+        /* Share top row */
+        margin-bottom: 0;
+    }
+
+    .mixed-row .form-group:nth-child(3) {
+        flex: 1 1 100%;
+        /* Mood takes full bottom row */
+        margin-bottom: 0;
+    }
+
+
+
+    /* Reduce margins on mobile for tighter fit */
+    .form-group {
+        margin-bottom: 0.8rem;
+    }
+
+
+
+    .nav-links .nav-btn span {
+        display: none;
+        /* Hide Text on Mobile */
+    }
+
+    /* Ensure icons are big enough to tap */
+    .nav-links .nav-btn svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .nav-controls {
+        display: none;
+        /* Just in case */
     }
 }
 
@@ -165,6 +235,10 @@ body {
     font-weight: 500;
     cursor: pointer;
     transition: color 0.3s;
+    /* Flex for Icon+Text */
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .nav-btn.active {
@@ -178,10 +252,22 @@ body {
     margin-bottom: 1.5rem;
 }
 
+#section-profile .card {
+    padding-top: 1rem;
+    /* Move text up */
+}
+
+#section-profile .card h2 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    /* Tighten gap between title and form */
+}
+
 .btn-primary {
     background: var(--primary);
     color: white;
-    padding: 0.75rem 1.5rem;
+    padding: 0.95rem 1.5rem;
+    /* Increased from 0.75rem */
     border: none;
     border-radius: 12px;
     font-weight: 600;
@@ -196,15 +282,23 @@ body {
 }
 
 .btn-secondary {
-    background: transparent;
-    border: 2px solid var(--primary);
-    color: var(--primary);
-    padding: 0.6rem 1.2rem;
-    border-radius: 10px;
+    background: var(--primary);
+    /* Blue (Same as Save) */
+    border: none;
+    color: white;
+    padding: 0.95rem 1.5rem;
+    border-radius: 12px;
     font-weight: 600;
     cursor: pointer;
     margin-top: 10px;
     width: 100%;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.btn-secondary:hover {
+    background: var(--primary-hover);
+    /* Match Save Button Hover */
+    transform: translateY(-2px);
 }
 
 /* Forms */
@@ -229,12 +323,20 @@ label {
     font-weight: 500;
 }
 
+
+
 input,
 select {
     width: 100%;
+    /* Shared styles continue below */
     padding: 0.8rem;
     border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    /* Gray border for visibility */
+    background: rgba(255, 255, 255, 0.9);
     background: rgba(255, 255, 255, 0.9);
     /* More opaque by default for readability */
     color: #1f2937;
@@ -243,13 +345,31 @@ select {
     transition: all 0.2s;
 }
 
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1rem;
+    padding-right: 2.5rem;
+    /* Space for the arrow */
+    background-color: rgba(255, 255, 255, 0.9);
+    /* Ensure bg color is kept */
+}
+
 input:focus,
 select:focus {
     outline: none;
-    border-color: var(--primary);
+    border-color: #9ca3af;
+    /* Gray Focus Border */
     background: white;
     color: #1f2937;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    box-shadow: 0 0 0 3px rgba(156, 163, 175, 0.2);
+    /* Gray Glow */
+    accent-color: #6b7280;
+    /* Gray Picker Color */
 }
 
 /* Sections */
@@ -478,3 +598,112 @@ canvas {
     border-radius: var(--card-radius);
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
+
+/* Subject List Styles */
+#subject-list {
+    margin-top: 1rem;
+    /* Reduced from 2rem */
+}
+
+.subject-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--glass-bg);
+    padding: 1rem;
+    border-radius: 12px;
+    border: 1px solid #d1d5db;
+    /* Match input border */
+    margin-bottom: 0.8rem;
+    transition: transform 0.2s;
+}
+
+.subject-item:hover {
+    transform: translateY(-2px);
+}
+
+.subject-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-main);
+}
+
+.subject-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.subject-tags span {
+    font-size: 0.75rem;
+    /* Reduced from 0.85rem */
+    padding: 0.3rem 0.6rem;
+    /* Reduced padding */
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+/* Tag Specific Colors (Optional enhancement) */
+.subject-tags span:nth-child(1) {
+    background: #e0e7ff;
+    color: #4338ca;
+}
+
+/* Priority */
+.subject-tags span:nth-child(2) {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+/* Strength */
+.subject-tags span:nth-child(3) {
+    background: #fae8ff;
+    color: #86198f;
+}
+
+/* Mobile-Specific Subject List Tweaks */
+@media (max-width: 600px) {
+    .subject-item {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        align-items: flex-start;
+        padding-bottom: 1rem;
+    }
+
+    /* Name takes most space, but leaves room for buttons */
+    .subject-name {
+        flex: 1 1 70%;
+        order: 1;
+    }
+
+    /* Buttons go to the right of Name */
+    .subject-item>div:last-child {
+        flex: 0 0 auto;
+        order: 2;
+    }
+
+    /* Tags drop to the next line */
+    .subject-tags {
+        flex: 1 1 100%;
+        order: 3;
+        margin-top: 0.2rem;
+        gap: 0.4rem;
+    }
+
+    /* Ensure tags are slightly smaller on mobile to fit */
+    .subject-tags span {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.5rem;
+    }
+}
+
+/* Enforce consistent borders in Dark Mode */
+[data-theme="dark"] .subject-item,
+[data-theme="dark"] input,
+[data-theme="dark"] select {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    /* Softer white border for dark mode */
+}
+
+
+/* Mood */

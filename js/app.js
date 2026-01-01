@@ -101,15 +101,24 @@ function showView(viewName) {
         sections[viewName].classList.remove('hidden');
         sections[viewName].classList.add('fade-in');
 
-        // Fix for charts resizing when hidden
-        if (viewName === 'dashboard') requestAnimationFrame(renderDashboard);
+        if (viewName === 'dashboard') {
+            requestAnimationFrame(renderDashboard);
+            // Update Greeting
+            const greeting = document.getElementById('dashboard-greeting');
+            if (greeting) {
+                const name = appState.profile ? appState.profile.name : null;
+                greeting.textContent = name ? `Hello ${name}! 👋` : 'Hello! 👋';
+            }
+        }
 
         // Populate Profile Form
         if (viewName === 'profile' && appState.profile) {
+            document.getElementById('inp-name').value = appState.profile.name || '';
             document.getElementById('inp-age').value = appState.profile.age || '';
             document.getElementById('inp-school-start').value = appState.profile.schoolStart || '08:00';
             document.getElementById('inp-school-end').value = appState.profile.schoolEnd || '15:00';
-            document.getElementById('inp-pref-slot').value = appState.profile.prefSlot || 'Any';
+            document.getElementById('inp-study-start').value = appState.profile.studyStart || '';
+            document.getElementById('inp-study-end').value = appState.profile.studyEnd || '';
         }
     }
 
@@ -123,13 +132,14 @@ Object.keys(nav).forEach(key => {
     });
 });
 
-// Mobile Menu Toggle
-const btnMenu = document.getElementById('btn-menu');
-if (btnMenu) {
-    btnMenu.addEventListener('click', () => {
-        navLinksContainer.classList.toggle('active');
-    });
-}
+// Mobile Menu Toggle Removed
+// const btnMenu = document.getElementById('btn-menu');
+// if (btnMenu) {
+//    btnMenu.addEventListener('click', () => {
+//        navLinksContainer.classList.toggle('active');
+//    });
+// }
+
 
 // --- THEME HANDLING ---
 const btnThemeToggle = document.getElementById('btn-theme-toggle');
@@ -172,13 +182,14 @@ initTheme();
 // --- PROFILE & SUBJECTS ---
 document.getElementById('profile-form').addEventListener('submit', async (e) => {
     e.preventDefault();
+    const name = document.getElementById('inp-name').value;
     const age = parseInt(document.getElementById('inp-age').value);
     const schoolStart = document.getElementById('inp-school-start').value;
     const schoolEnd = document.getElementById('inp-school-end').value;
     const studyStart = document.getElementById('inp-study-start').value;
     const studyEnd = document.getElementById('inp-study-end').value;
 
-    const profile = { age, schoolStart, schoolEnd, studyStart, studyEnd };
+    const profile = { name, age, schoolStart, schoolEnd, studyStart, studyEnd };
     await db.saveProfile(profile);
     appState.profile = profile;
     showToast("Profile saved!");
@@ -200,7 +211,7 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
 document.getElementById('subject-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const name = document.getElementById('inp-sub-name').value;
-    const priority = document.getElementById('inp-sub-prio').value;
+    const priority = document.getElementById('inp-sub-priority').value;
     const weakness = document.getElementById('inp-sub-weak').value;
     const mood = document.getElementById('inp-sub-mood').value;
 
@@ -216,26 +227,91 @@ document.getElementById('subject-form').addEventListener('submit', async (e) => 
 function renderSubjectList() {
     const list = document.getElementById('subject-list');
     list.innerHTML = '';
+
     appState.subjects.forEach(sub => {
         const div = document.createElement('div');
         div.className = 'subject-item';
-        div.innerHTML = `
-            <div class="subject-name">${sub.name}</div>
-            <div class="subject-tags">
-                <span>${sub.priority}</span>
-                <span>${sub.weakness}</span>
-                <span>${sub.mood}</span>
-            </div>
-            <button class="btn-del" data-id="${sub.id}" style="border:none;background:none;color:red;cursor:pointer;">&times;</button>
-        `;
-        list.appendChild(div);
+        // Ensure the item container handles the extra edit inputs gracefully? 
+        // Actually, for edit view, we might want to change class or style.
+        // But subject-item class likely defines the row layout. 
+        // We might need to override it for edit view if it uses flex row.
 
-        div.querySelector('.btn-del').addEventListener('click', async (e) => {
-            const id = parseInt(e.target.dataset.id);
-            await db.deleteSubject(id);
-            appState.subjects = appState.subjects.filter(s => s.id !== id);
-            renderSubjectList();
-        });
+        const renderReadView = () => {
+            div.innerHTML = `
+                <div class="subject-name">${sub.name}</div>
+                <div class="subject-tags">
+                    <span>${sub.priority}</span>
+                    <span>${sub.weakness}</span>
+                    <span>${sub.mood}</span>
+                </div>
+                <div style="display:flex; gap:5px;">
+                    <button class="btn-edit" style="border:none;background:none;color:var(--text-main);cursor:pointer;" title="Edit">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                    </button>
+                    <button class="btn-del" data-id="${sub.id}" style="border:none;background:none;color:#ef4444;cursor:pointer;" title="Delete">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                    </button>
+                </div>
+            `;
+
+            div.querySelector('.btn-edit').onclick = () => renderEditView();
+
+            div.querySelector('.btn-del').onclick = async () => {
+                if (confirm("Delete " + sub.name + "?")) {
+                    await db.deleteSubject(sub.id);
+                    appState.subjects = appState.subjects.filter(s => s.id !== sub.id);
+                    renderSubjectList();
+                }
+            };
+        };
+
+        const renderEditView = () => {
+            div.innerHTML = `
+                <div style="display:flex; flex-direction:column; gap:10px; width:100%;">
+                    <input type="text" class="inp-edit-sub-name" value="${sub.name}" style="padding:5px; border-radius:5px; border:1px solid #ccc;">
+                    <div style="display:flex; gap:5px; flex-wrap:wrap;">
+                        <select class="inp-edit-sub-prio" style="flex:1; padding:5px; border-radius:5px;">
+                            <option value="High" ${sub.priority === 'High' ? 'selected' : ''}>High</option>
+                            <option value="Medium" ${sub.priority === 'Medium' ? 'selected' : ''}>Medium</option>
+                            <option value="Low" ${sub.priority === 'Low' ? 'selected' : ''}>Low</option>
+                        </select>
+                        <select class="inp-edit-sub-weak" style="flex:1; padding:5px; border-radius:5px;">
+                            <option value="Strong" ${sub.weakness === 'Strong' ? 'selected' : ''}>Strong</option>
+                            <option value="Weak" ${sub.weakness === 'Weak' ? 'selected' : ''}>Weak</option>
+                        </select>
+                        <select class="inp-edit-sub-mood" style="flex:1; padding:5px; border-radius:5px;">
+                            <option value="Like" ${sub.mood === 'Like' ? 'selected' : ''}>Like</option>
+                            <option value="Neutral" ${sub.mood === 'Neutral' ? 'selected' : ''}>Neutral</option>
+                            <option value="Dislike" ${sub.mood === 'Dislike' ? 'selected' : ''}>Dislike</option>
+                        </select>
+                    </div>
+                    <div style="display:flex; gap:10px; justify-content:flex-end;">
+                        <button class="btn-cancel-sub" style="padding:5px 10px; border-radius:5px; border:none; background:#ef4444; color:white; cursor:pointer;">Cancel</button>
+                        <button class="btn-save-sub" style="padding:5px 15px; border-radius:5px; border:none; background:var(--primary); color:white; cursor:pointer;">Save</button>
+                    </div>
+                </div>
+            `;
+
+            div.querySelector('.btn-cancel-sub').onclick = () => renderReadView();
+
+            div.querySelector('.btn-save-sub').onclick = async () => {
+                const newName = div.querySelector('.inp-edit-sub-name').value;
+                if (!newName) return;
+
+                // Update Object
+                sub.name = newName;
+                sub.priority = div.querySelector('.inp-edit-sub-prio').value;
+                sub.weakness = div.querySelector('.inp-edit-sub-weak').value;
+                sub.mood = div.querySelector('.inp-edit-sub-mood').value;
+
+                await db.saveSubject(sub); // Update DB
+                showToast("Subject Updated!");
+                renderSubjectList(); // Re-render logic
+            };
+        };
+
+        renderReadView();
+        list.appendChild(div);
     });
 }
 
@@ -244,28 +320,41 @@ const btnGenerate = document.getElementById('btn-generate');
 const btnRegenerate = document.getElementById('btn-regenerate');
 
 async function handleGenerate() {
+    // Request Notification permission (User Interaction)
+    if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission();
+    }
+
+    console.log("Generating...", appState.profile, appState.subjects);
     if (!appState.profile || appState.subjects.length === 0) {
         showToast("Please complete profile and add subjects first.");
         showView('profile');
         return;
     }
 
-    const today = new Date();
-    const generatedWeek = scheduler.generateWeekly(appState.profile, appState.subjects, today);
+    try {
+        const today = new Date();
+        const generatedWeek = scheduler.generateWeekly(appState.profile, appState.subjects, today);
+        console.log("Generated Week:", generatedWeek);
 
-    if (generatedWeek && generatedWeek.length > 0) {
-        // Save all days
-        for (const plan of generatedWeek) {
-            await db.saveTimetable(plan);
+        if (generatedWeek && generatedWeek.length > 0) {
+            // Save all days
+            for (const plan of generatedWeek) {
+                await db.saveTimetable(plan);
+            }
+            appState.timetable = generatedWeek;
+            appState.selectedDayIndex = 0;
+
+            showToast("Weekly Timetable Generated!");
+            showView('timetable');
+            renderTimetable();
+        } else {
+            console.warn("Generation returned empty.");
+            showToast("Generation returned no slots. Check profile hours.");
         }
-        appState.timetable = generatedWeek;
-        appState.selectedDayIndex = 0;
-
-        showToast("Weekly Timetable Generated!");
-        showView('timetable');
-        renderTimetable();
-    } else {
-        showToast("Generation failed.");
+    } catch (e) {
+        console.error("Generation failed:", e);
+        showToast("Error: " + e.message);
     }
 }
 
@@ -353,8 +442,28 @@ function renderTimetable() {
 // --- EDIT MODAL ---
 const editModal = document.getElementById('edit-modal');
 const editSelect = document.getElementById('edit-subject-select');
+const editStartTime = document.getElementById('edit-start-time');
+const editEndTime = document.getElementById('edit-end-time');
 const btnSaveEdit = document.getElementById('btn-save-edit');
 const btnCancelEdit = document.getElementById('btn-cancel-edit');
+
+function convert12hTo24h(timeStr) {
+    // "10:30 AM" -> "10:30", "02:00 PM" -> "14:00"
+    const [time, modifier] = timeStr.split(' ');
+    let [hours, minutes] = time.split(':');
+    if (hours === '12') hours = '00';
+    if (modifier === 'PM') hours = parseInt(hours, 10) + 12;
+    return `${hours}:${minutes}`;
+}
+
+function convert24hTo12h(timeStr) {
+    // "14:00" -> "02:00 PM"
+    let [hours, minutes] = timeStr.split(':');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    return `${hours}:${minutes} ${ampm}`;
+}
 
 function openEditModal(dayIdx, slotIdx) {
     editingSlot = { dayIdx, slotIdx };
@@ -381,8 +490,12 @@ function openEditModal(dayIdx, slotIdx) {
 
     if (slot.subjectName === 'Break') optBreak.selected = true;
 
+    // Populate Times
+    editStartTime.value = convert12hTo24h(slot.startTime);
+    editEndTime.value = convert12hTo24h(slot.endTime);
+
     // Show
-    document.getElementById('edit-slot-info').textContent = `${day.dayName} @ ${slot.startTime} - ${slot.endTime}`;
+    document.getElementById('edit-slot-info').textContent = `${day.dayName}`;
     editModal.classList.remove('hidden');
 }
 
@@ -397,29 +510,61 @@ if (btnSaveEdit) btnSaveEdit.onclick = async () => {
     if (!editingSlot) return;
 
     const newSubject = editSelect.value;
+    const newStart = editStartTime.value ? convert24hTo12h(editStartTime.value) : null;
+    const newEnd = editEndTime.value ? convert24hTo12h(editEndTime.value) : null;
     const { dayIdx, slotIdx } = editingSlot;
 
-    // Update State
+    // Update Subject for the SPECIFIC day
     appState.timetable[dayIdx].slots[slotIdx].subjectName = newSubject;
 
-    // Save to DB (update entire day or specific logic?)
-    // Our DB has saveTimetable(dayPlan) which upserts by date.
-    await db.saveTimetable(appState.timetable[dayIdx]);
+    // Update Time for ALL days to keep the grid consistent
+    if (newStart || newEnd) {
+        appState.timetable.forEach(day => {
+            if (day.slots[slotIdx]) {
+                if (newStart) day.slots[slotIdx].startTime = newStart;
+                if (newEnd) day.slots[slotIdx].endTime = newEnd;
+            }
+        });
+    }
+
+    // Helper for sorting
+    const timeToMin = (tVal) => {
+        if (!tVal) return 0;
+        const [time, modifier] = tVal.split(' ');
+        let [h, m] = time.split(':').map(Number);
+        if (modifier === 'PM' && h !== 12) h += 12;
+        if (modifier === 'AM' && h === 12) h = 0;
+        return h * 60 + m;
+    };
+
+    // Sort ALL days
+    appState.timetable.forEach(day => {
+        day.slots.sort((a, b) => timeToMin(a.startTime) - timeToMin(b.startTime));
+    });
+
+    // Save ALL days to DB
+    for (const day of appState.timetable) {
+        await db.saveTimetable(day);
+    }
 
     showToast("Updated!");
     renderTimetable();
-    renderDashboard(); // Update stats potentially
+    renderDashboard();
     closeEditModal();
 };
 
 // --- NOTES ---
 // --- NOTES ---
 document.getElementById('btn-save-note').addEventListener('click', async () => {
-    const title = document.getElementById('inp-note-title').value;
-    const content = document.getElementById('inp-note-content').value;
+    const titleInp = document.getElementById('inp-note-title');
+    const contentInp = document.getElementById('inp-note-content');
+
+    const title = titleInp.value;
+    const content = contentInp.value;
 
     if (!content.trim() && !title.trim()) return;
 
+    // CREATE New
     const note = {
         title,
         content,
@@ -429,12 +574,12 @@ document.getElementById('btn-save-note').addEventListener('click', async () => {
 
     await db.saveNote(note);
     appState.notes.unshift(note);
+    showToast("Note Saved");
 
-    document.getElementById('inp-note-content').value = '';
-    document.getElementById('inp-note-title').value = '';
+    contentInp.value = '';
+    titleInp.value = '';
 
     renderNotesList();
-    showToast("Note Saved");
 });
 
 function renderNotesList() {
@@ -448,43 +593,87 @@ function renderNotesList() {
         div.style.padding = '1.5rem';
         div.style.minHeight = '100px';
 
-        const titleHtml = note.title ? `<h4 style="margin:0; color:var(--primary);">${note.title}</h4>` : '<h4 style="margin:0; opacity:0">.</h4>'; // Placeholder for alignment
+        // 1. READ ONLY VIEW (Default)
+        const renderReadView = () => {
+            div.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                    <div style="flex:1;">
+                         ${note.title ? `<h4 style="margin:0; color:var(--primary);">${note.title}</h4>` : ''}
+                         <span class="note-date" style="font-size:0.7em; color:gray;">${date}</span>
+                    </div>
+                    <div class="note-controls no-export" style="display:flex; gap:10px;">
+                        <button class="btn-edit-note" title="Edit" style="background:none; border:none; color:var(--text-main); cursor:pointer;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                        </button>
+                        <button class="btn-save-image" title="Save Image" style="background:none; border:none; color:var(--text-main); cursor:pointer;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        </button>
+                        <button class="btn-del-note" title="Delete" style="background:none; border:none; color: #ef4444; cursor:pointer;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                        </button>
+                    </div>
+                </div>
+                <p style="white-space: pre-wrap;">${note.content}</p>
+            `;
 
-        // Header Flex: Title - Date - Controls
-        div.innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-                <div style="flex:1;">
-                     ${note.title ? `<h4 style="margin:0; color:var(--primary);">${note.title}</h4>` : ''}
-                     <span class="note-date" style="font-size:0.7em; color:gray;">${date}</span>
+            // Functionality
+            div.querySelector('.btn-del-note').onclick = async () => {
+                if (confirm("Delete this note?")) {
+                    await db.deleteNote(note.id);
+                    appState.notes = appState.notes.filter(n => n.id !== note.id);
+                    renderNotesList(); // Re-render all
+                    showToast("Note Deleted");
+                }
+            };
+
+            div.querySelector('.btn-edit-note').onclick = () => {
+                renderEditView();
+            };
+
+            div.querySelector('.btn-save-image').onclick = () => {
+                captureAndDownload(div, `note-${note.title || 'untitled'}.png`);
+            };
+        };
+
+        // 2. EDIT VIEW (Inline Form)
+        const renderEditView = () => {
+            div.innerHTML = `
+                <div style="margin-bottom:1rem; display:flex; flex-direction:column; gap:8px;">
+                     <input type="text" class="inp-edit-title" value="${note.title || ''}" placeholder="Title" style="padding:8px; border-radius:5px; border:1px solid #ccc; background:var(--glass-bg); color:var(--text-main);">
+                     <div style="font-size:0.7em; color:gray;">${date} (Editing)</div>
                 </div>
-                <div class="note-controls no-export" style="display:flex; gap:10px;">
-                    <button class="btn-save-note-img" data-id="${note.id}" title="Save as Image" style="background:none; border:none; color:var(--text-main); cursor:pointer;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                    </button>
-                    <button class="btn-del-note" data-id="${note.id}" title="Delete" style="background:none; border:none; color: #ef4444; font-size:1.2rem; cursor:pointer;">
-                        &times;
-                    </button>
+                <textarea class="inp-edit-content" style="width:100%; min-height:80px; padding:8px; border-radius:5px; border:1px solid #ccc; background:var(--glass-bg); color:var(--text-main); margin-bottom:10px;">${note.content}</textarea>
+                
+                <div style="display:flex; justify-content:flex-end; gap:10px;">
+                    <button class="btn-cancel-edit" style="padding:5px 10px; border-radius:5px; border:none; background:#ef4444; color:white; cursor:pointer;">Cancel</button>
+                    <button class="btn-save-edit" style="padding:5px 15px; border-radius:5px; border:none; background:var(--primary); color:white; cursor:pointer;">Save</button>
                 </div>
-            </div>
-            <p style="white-space: pre-wrap;">${note.content}</p>
-        `;
+            `;
+
+            div.querySelector('.btn-cancel-edit').onclick = () => {
+                renderReadView(); // Revert
+            };
+
+            div.querySelector('.btn-save-edit').onclick = async () => {
+                const newTitle = div.querySelector('.inp-edit-title').value;
+                const newContent = div.querySelector('.inp-edit-content').value;
+
+                if (!newContent.trim() && !newTitle.trim()) return;
+
+                // Update Object
+                note.title = newTitle;
+                note.content = newContent;
+                note.timestamp = new Date().toISOString(); // Update timestamp to reflect modification
+
+                await db.saveNote(note);
+                showToast("Note Updated");
+                renderNotesList(); // Refresh list to ensure clean state
+            };
+        };
+
+        // Initial Render
+        renderReadView();
         list.appendChild(div);
-
-        // Delete Handler
-        div.querySelector('.btn-del-note').addEventListener('click', async (e) => {
-            const id = parseInt(e.currentTarget.dataset.id);
-            if (confirm("Delete this note?")) {
-                await db.deleteNote(id);
-                appState.notes = appState.notes.filter(n => n.id !== id);
-                renderNotesList();
-                showToast("Note Deleted");
-            }
-        });
-
-        // Save Image Handler
-        div.querySelector('.btn-save-note-img').addEventListener('click', () => {
-            captureAndDownload(div, `note-${note.title || 'untitled'}.png`);
-        });
     });
 }
 
@@ -567,3 +756,4 @@ function showToast(msg) {
 
 // Start
 window.addEventListener('DOMContentLoaded', init);
+
