@@ -147,8 +147,8 @@ body {
 
         justify-content: flex-end;
         /* Icons to the right */
-        gap: 0.4rem;
-        /* Balanced gap */
+        gap: 0.6rem;
+        /* Balanced gap matching reference */
     }
 
     .nav-links .nav-btn {
