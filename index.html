@@ -273,7 +273,7 @@
     </div>
 
     <footer style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.9rem; margin-top: 2rem;">
-        <p>TEAM KARAS &copy; All Rights Reserved 2026. <span style="opacity:0.5; font-size:0.8em;">(v3.8)</span></p>
+        <p>TEAM KARAS &copy; All Rights Reserved 2026. <span style="opacity:0.5; font-size:0.8em;">(v3.9)</span></p>
     </footer>
 
     <div id="toast" class="toast hidden">Notification</div>
@@ -291,7 +291,7 @@
         if ('serviceWorker' in navigator) {
             // Only register if http/https to avoid error logs
             if (window.location.protocol.startsWith('http')) {
-                navigator.serviceWorker.register('sw.js?v=3.8')
+                navigator.serviceWorker.register('sw.js?v=3.9')
                     .then(reg => console.log('SW Registered'))
                     .catch(err => console.log('SW Fail', err));
             }
